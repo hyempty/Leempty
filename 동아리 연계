@@ -1,80 +1,112 @@
 from tkinter import *
 import random
+
 li = []
-listst=[]
+listst = []
 win = Tk()
 win.geometry("500x500")
 win.title("teacher")
-win.option_add("*Font","25")
-#학생 수 입력
-label1 = Label(win)
-label1.config(text = "학생 수")
+win.option_add("*Font", "25")
+
+# 학생 수 입력
+label1 = Label(win, text="학생 수")
 label1.pack()
 num = Entry(win)
 num.pack()
-#입력 완료 버튼 클릭 -> 학생 닉네임 입력창, 타이머 설정 입력창 
-enterst = Button(win)                         # 입력 완료 버튼
-enterst.config(text="입력완료")
+
 def entst():
-    #학생 닉네임
-    label2 = Label(win)
-    label2.config(text = "학생 닉네임")
+    # 학생 닉네임
+    label2 = Label(win, text="학생 닉네임")
     label2.pack()
     a = int(num.get())
     for i in range(a):
         name = Entry(win)
         name.pack()
         li.append(name)
-    #타이머 설정
-    label3 = Label(win)
-    label3.config(text = "제한시간(초)")
+
+    # 타이머 설정
+    label3 = Label(win, text="제한시간(초)")
     label3.pack()
     time = Entry(win)
     time.pack()
-    #입력 완료 버튼
-    enter = Button(win)
-    enter.config(text="입력완료")
-    
-    #입력완료 버튼 클릭 -> 스크린 초기화, 순서뽑기 버튼 생성
+
+    # 입력 완료 버튼
     def reset_screen(): 
-        a = num.get()
-        print(a)
+        a = int(num.get())
         for entry in li:
             listst.append(entry.get())
-        print(listst)
         c = time.get()
-        print(c)
         for widget in win.winfo_children():
             widget.destroy()
-        turn = Button(win)                             # 순서 뽑기 버튼
-        turn.config(text="순서 뽑기")
         
-        # 순서 뽑기 버튼 클릭 -> 순서 뽑기, 학생 창 실행
-        def randomturn():                              # 순서 뽑기 함수
+        # 순서 뽑기 버튼
+        def randomturn():
             global listst
             random.shuffle(listst)
             result = "\n".join(f"{i+1}. {name}" for i, name in enumerate(listst))
-            labelturn = Label(win)
-            labelturn.config(text=f"{result}")
+            labelturn = Label(win, text=result)
             labelturn.pack()
-            print(result)
-            win2 = Tk()                                # 학생 창 실행
+
+            # 학생 창 실행
+            win2 = Toplevel()
             win2.geometry("500x500")
             win2.title("student")
-            win2.option_add("*Font","25")
-            gamest = Button(win2)                      # 게임 시작 버튼               
-            gamest.config(text="게임시작")
-            def gamestb():                             # 게임 시작 함수 (내용추가..?)
-                label5 = Label(win2)
-                label5.config(text = "질문들")
-                label5.pack()
-            gamest.config(command=gamestb)
+            win2.option_add("*Font", "25")
+
+            def gamestb():
+                label4 = Label(win, text="질문을 입력해주세요")
+                label4.pack()
+                que = Entry(win)
+                que.pack()
+
+                def que_complete():
+                    scores = {}
+                    answerli = []
+                    label5 = Label(win2, text = f"{que.get()}")
+                    label5.pack()
+                    ia = int(a)
+                    for n in range(ia):
+                        label5 = Label(win2, text=f"{n+1}번째 학생이 답안을 입력하세요")
+                        label5.pack()
+                        answer_entry = Entry(win2)
+                        answer_entry.pack()
+                        answerli.append(answer_entry)
+
+                    def select_answer(name):
+                        # 원래 창에 있던 것들 제거
+                        for widget in win.winfo_children():
+                            widget.destroy()
+                        # 채택된 답변과 점수 표시
+                        Label(win, text=f"{name} (이)가 채택되었습니다.").pack(pady=10)
+                        Label(win, text=f"점수: {scores[name]}").pack(pady=10)
+                        # 계속하기 버튼과 끝내기 버튼 생성
+                        Button(win, text="계속하기", command=lambda: reset_screen()).pack(pady=10)
+                        Button(win, text="끝내기", command=win.quit).pack(pady=10)
+
+                    def answerh():
+                        for answer_entry in answerli:
+                            answer = answer_entry.get()
+                            scores[answer] = scores.get(answer, 0) + 1
+                            select = Button(win, text=f"{answer}", command=lambda a=answer: select_answer(a))
+                            select.pack()
+
+                    answerb = Button(win2, text="답변 완료", command=answerh)
+                    answerb.pack()
+
+                queb = Button(win, text="질문 완료", command=que_complete)
+                queb.pack()
+
+            gamest = Button(win2, text="게임시작", command=gamestb)
             gamest.pack()
-            win2.mainloop()
-        turn.config(command=randomturn)
-        turn.pack()   
-    enter.config(command=reset_screen)
+
+        turn = Button(win, text="순서 뽑기", command=randomturn)
+        turn.pack()
+
+    enter = Button(win, text="입력완료", command=reset_screen)
     enter.pack()
-enterst.config(command=entst)
+
+enterst = Button(win, text="입력완료", command=entst)
 enterst.pack()
+
 win.mainloop()
+

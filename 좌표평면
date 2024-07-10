@@ -1,0 +1,46 @@
+import matplotlib.pyplot as plt
+from tkinter import *
+coordinates = []
+win = Tk()
+win.geometry("500x500")
+win.title("좌표평면 그리기")
+win.option_add("*Font","25")
+
+label1 = Label(win)
+label1.config(text = "좌표 개수")
+label1.pack()
+coor = Entry(win)
+coor.pack()
+coors = Button(win)                    
+coors.config(text="입력완료")
+def coorb():
+    label2 = Label(win)
+    label2.config(text = "좌표를 입력하시오")
+    label2.pack()
+    a = int(coor.get())
+    for i in range(a):
+        coors = Entry(win)
+        coors.pack()
+        coordinates.append(coors)
+    start = Button(win)                    
+    start.config(text="좌표평면 그리기")
+    
+    def startb():
+        x_coords = [int(entry.get().split(",")[0]) for entry in coordinates]
+        y_coords = [int(entry.get().split(",")[1]) for entry in coordinates]
+
+        plt.figure(figsize=(8, 6))
+        plt.plot(x_coords, y_coords, 'bo', label='Coordinates') 
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.axhline(0, color='black', linewidth=0.5)
+        plt.axvline(0, color='black', linewidth=0.5)
+        plt.grid(color='gray', linestyle='--', linewidth=0.5)
+        plt.legend()
+        plt.show()
+   
+    start.config(command=startb)
+    start.pack()
+coors.config(command= coorb)
+coors.pack()
+win.mainloop()

@@ -1,0 +1,80 @@
+from tkinter import *
+import random
+li = []
+listst=[]
+win = Tk()
+win.geometry("500x500")
+win.title("teacher")
+win.option_add("*Font","25")
+#학생 수 입력
+label1 = Label(win)
+label1.config(text = "학생 수")
+label1.pack()
+num = Entry(win)
+num.pack()
+#입력 완료 버튼 클릭 -> 학생 닉네임 입력창, 타이머 설정 입력창 
+enterst = Button(win)                         # 입력 완료 버튼
+enterst.config(text="입력완료")
+def entst():
+    #학생 닉네임
+    label2 = Label(win)
+    label2.config(text = "학생 닉네임")
+    label2.pack()
+    a = int(num.get())
+    for i in range(a):
+        name = Entry(win)
+        name.pack()
+        li.append(name)
+    #타이머 설정
+    label3 = Label(win)
+    label3.config(text = "제한시간(초)")
+    label3.pack()
+    time = Entry(win)
+    time.pack()
+    #입력 완료 버튼
+    enter = Button(win)
+    enter.config(text="입력완료")
+    
+    #입력완료 버튼 클릭 -> 스크린 초기화, 순서뽑기 버튼 생성
+    def reset_screen(): 
+        a = num.get()
+        print(a)
+        for entry in li:
+            listst.append(entry.get())
+        print(listst)
+        c = time.get()
+        print(c)
+        for widget in win.winfo_children():
+            widget.destroy()
+        turn = Button(win)                             # 순서 뽑기 버튼
+        turn.config(text="순서 뽑기")
+        
+        # 순서 뽑기 버튼 클릭 -> 순서 뽑기, 학생 창 실행
+        def randomturn():                              # 순서 뽑기 함수
+            global listst
+            random.shuffle(listst)
+            result = "\n".join(f"{i+1}. {name}" for i, name in enumerate(listst))
+            labelturn = Label(win)
+            labelturn.config(text=f"{result}")
+            labelturn.pack()
+            print(result)
+            win2 = Tk()                                # 학생 창 실행
+            win2.geometry("500x500")
+            win2.title("student")
+            win2.option_add("*Font","25")
+            gamest = Button(win2)                      # 게임 시작 버튼               
+            gamest.config(text="게임시작")
+            def gamestb():                             # 게임 시작 함수 (내용추가..?)
+                label5 = Label(win2)
+                label5.config(text = "질문들")
+                label5.pack()
+            gamest.config(command=gamestb)
+            gamest.pack()
+            win2.mainloop()
+        turn.config(command=randomturn)
+        turn.pack()   
+    enter.config(command=reset_screen)
+    enter.pack()
+enterst.config(command=entst)
+enterst.pack()
+win.mainloop()
